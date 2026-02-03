@@ -15,7 +15,7 @@ const Modal = ({ id, isEditing, setIsEditing, currentTitle, currentDesc, getNote
     async function handleEdit(e) {
         e.preventDefault()
         console.log(title, desc)
-        await axios.patch(`http://localhost:3000/api/notes/${id}`, {
+        await axios.patch(`https://notes-app-basic.onrender.com/api/notes/${id}`, {
             title, description: desc
         })
         getNotes()
@@ -30,7 +30,7 @@ const Modal = ({ id, isEditing, setIsEditing, currentTitle, currentDesc, getNote
                 }} className="w-full flex flex-col justify-center items-center gap-3">
                     <input name='title' onChange={(e) => { setTitle(e.target.value) }} value={title} type="text" placeholder='Enter title' className="w-full px-2 py-3 rounded bg-white text-md font-medium text-black/60" />
                     <input name='desc' onChange={(e) => { setDesc(e.target.value) }} value={desc} type="text" placeholder='Enter description' className="w-full px-2 py-3 rounded bg-white text-md font-medium text-black/60" />
-                    <button type='submit' className="px-6 py-2 rounded bg-emerald-400 cursor-pointer" type='submit'>Save</button>
+                    <button type='submit' className="px-6 py-2 rounded bg-emerald-400 cursor-pointer">Save</button>
                 </form>
             </div>
         </div>

@@ -15,7 +15,7 @@ const App = () => {
   const [editDesc, setEditDesc] = useState('')
 
   async function getNotes() {
-    const res = await axios.get('http://localhost:3000/api/notes')
+    const res = await axios.get('https://notes-app-basic.onrender.com/api/notes')
     setNotes(res.data.allNotes)
   }
 
@@ -28,7 +28,7 @@ const App = () => {
     const elements = e.target.elements
     const title = elements.title.value
     const description = elements.desc.value
-    await axios.post('http://localhost:3000/api/notes', {
+    await axios.post('https://notes-app-basic.onrender.com/api/notes', {
       title, description
     })
     setTitle('')
@@ -37,7 +37,7 @@ const App = () => {
   }
 
   async function deleteNote(id) {
-    await axios.delete(`http://localhost:3000/api/notes/${id}`)
+    await axios.delete(`https://notes-app-basic.onrender.com/api/notes/${id}`)
     getNotes()
   }
 
