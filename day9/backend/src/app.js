@@ -1,7 +1,7 @@
 const express = require('express')
-const notesModel = require('./modules/notes.model')
+const notesModel = require('./models/notes.model')
 const cors = require('cors')
-const path = require('path')
+const { ClerkExpressRequireAuth } = require('@clerk/clerk-sdk-node')
 
 const app = express()
 
@@ -9,12 +9,14 @@ const app = express()
 app.use(express.json())
 app.use(cors())
 app.use(express.static('./public'))
+app.use(ClerkExpressRequireAuth())
 
 // APIs
 app.post('/api/notes', async (req, res) => {
+    const { userId } = req.auth
     const { title, description } = req.body
     const note = await notesModel.create({
-        title, description
+        userId, title, description
     })
 
     res.status(201).json({
@@ -24,17 +26,21 @@ app.post('/api/notes', async (req, res) => {
 })
 
 app.get('/api/notes', async (req, res) => {
-    const allNotes = await notesModel.find()
+    const { userId } = req.auth
+    const allNotesOfTheUser = await notesModel.find({ userId })
 
     res.status(200).json({
         "message": "Notes Fetched Succesfully",
-        allNotes
+        allNotesOfTheUser
     })
 })
 
 app.delete('/api/notes/:id', async (req, res) => {
+    const { userId } = req.auth
     const { id } = req.params
-    await notesModel.findByIdAndDelete(id)
+    await notesModel.findOneAndDelete({
+        _id: id, userId
+    })
 
     res.status(200).json({
         "message": "Note Deleted Succesfully"
@@ -42,10 +48,13 @@ app.delete('/api/notes/:id', async (req, res) => {
 })
 
 app.patch('/api/notes/:id', async (req, res) => {
+    const { userId } = req.auth
     const { id } = req.params
     const { title, description } = req.body
 
-    await notesModel.findByIdAndUpdate(id, {
+    await notesModel.findOneAndUpdate({
+        _id: id, userId
+    }, {
         title, description
     })
 
@@ -53,10 +62,5 @@ app.patch('/api/notes/:id', async (req, res) => {
         "message": "Description Modified Succesfully"
     })
 })
-
-// app.use('*name', (req, res) => {
-//     res.sendFile(path.join(__dirname, '../public/index.html'))
-// })
-
 
 module.exports = app

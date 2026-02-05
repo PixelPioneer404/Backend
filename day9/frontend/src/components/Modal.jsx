@@ -1,11 +1,14 @@
 import React, { useEffect } from 'react'
 import { useState } from 'react'
 import axios from 'axios'
+import { useAuth } from '@clerk/clerk-react'
 
 const Modal = ({ id, isEditing, setIsEditing, currentTitle, currentDesc, getNotes }) => {
 
     const [title, setTitle] = useState(currentTitle)
     const [desc, setDesc] = useState(currentDesc)
+
+    const { getToken } = useAuth()
 
     useEffect(() => {
         setTitle(currentTitle)
@@ -14,9 +17,13 @@ const Modal = ({ id, isEditing, setIsEditing, currentTitle, currentDesc, getNote
 
     async function handleEdit(e) {
         e.preventDefault()
-        console.log(title, desc)
+        const token = await getToken()
         await axios.patch(`https://notes-app-basic.onrender.com/api/notes/${id}`, {
             title, description: desc
+        }, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
         })
         getNotes()
     }
